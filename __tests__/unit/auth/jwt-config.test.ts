@@ -2,8 +2,8 @@ import { getJWTSecret, getJWTSecretCached } from '@/lib/jwt-config';
 
 describe('JWT Config', () => {
   beforeEach(() => {
-    // Clear any existing JWT secret
-    process.env.JWT_SECRET = undefined;
+    // 真正移除该变量（注意：process.env 赋值 undefined 会被强转为字符串 "undefined"）
+    delete process.env.JWT_SECRET;
     // Clear the cached secret by requiring the module again
     jest.resetModules();
   });

@@ -137,7 +137,8 @@ describe('User Model', () => {
     });
 
     it('should throw error when insufficient star coins', async () => {
-      mockQuery.mockResolvedValueOnce([{ affectedRows: 0 }]);
+      // db.query 已解构 mysql2 元组，直接返回结果集（非 [results, fields] 形状）
+      mockQuery.mockResolvedValueOnce({ affectedRows: 0 });
 
       await expect(updateStarCoins(1, 500, 'subtract')).rejects.toThrow('星币余额不足');
     });

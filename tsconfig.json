@@ -17,6 +17,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
+    "types": [
+      "jest",
+      "node"
+    ],
     "incremental": true,
     "plugins": [
       {
@@ -37,7 +41,6 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "__tests__"
+    "node_modules"
   ]
 }

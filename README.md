@@ -172,7 +172,7 @@ const baguaScript = await generateScript({
 
 | 能力 | 静态模式（默认） | 全栈模式 |
 | ------ | ---------------- | --------- |
-| 页面渲染 | ✅ SSG 16 页 | ✅ SSR/SSG |
+| 页面渲染 | ✅ SSG 15 页 | ✅ SSR/SSG |
 | 登录/API | ❌ 404（`app/api` 已排除） | ✅ 完整可用 |
 | 路由保护 | 客户端 AuthProvider 兜底 | middleware 服务端守卫 |
 | 启用方式 | 默认 | `NEXT_OUTPUT_FULLSTACK=true` + 恢复 `app/api` 与 `disabled/middleware.ts` |
@@ -309,13 +309,15 @@ pnpm lint
 pnpm test
 \`\`\`
 
-### 质量门禁基线（v1.2.0）
+### 质量门禁基线（2026-10-05 起，全部为 CI 硬门禁）
 
 | 门禁 | 状态 | 基线 |
 |------|------|------|
-| TypeScript 6 严格模式 | ✅ 构建强制 | 0 错误（71→0，含 noUncheckedSideEffectImports） |
-| ESLint 9 flat config | ✅ 独立命令（`pnpm lint`） | 0 错误（Next 16 移除构建期 lint） |
-| 静态导出 | ✅ CI 通过 | 17 页面全量生成（Turbopack） |
+| TypeScript 6 严格模式 | ✅ CI 硬门禁 + 构建强制 | 0 错误（含测试文件） |
+| ESLint 9 flat config | ✅ CI 硬门禁（`pnpm lint`） | 0 错误 |
+| 单元测试（Jest 30） | ✅ CI 硬门禁 | 4 套件 20 用例全绿 |
+| 构建产物冒烟 | ✅ CI 硬门禁 | 路由存在性 / 内部路由不泄漏 / 体积 ≤50MB / 静态纯度 |
+| 静态导出 | ✅ CI 通过 | 15 页全量生成（Turbopack） |
 
 ## 🎨 设计系统
 
@@ -461,8 +463,9 @@ export const revalidate = 3600 // 1小时重新验证
 
 ### 测试框架
 
-- **单元测试**：Jest 30 + React Testing Library
-- **覆盖率门禁**：80%（branches/functions/lines/statements）
+- **单元测试**：Jest 30 + React Testing Library（`pnpm test`）
+- **覆盖率**：基线建设中——当前以"全部测试通过"为 CI 硬门禁，真实覆盖率基线测出后另行设定阈值（历史文档中的"80% 覆盖率门禁"从未生效，已于 2026-10-05 移除）
+- **构建冒烟**：`node scripts/smoke-build.mjs out`（路由/泄漏/体积/静态纯度四项校验，已入 CI）
 
 ### 运行测试
 

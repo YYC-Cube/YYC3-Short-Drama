@@ -1,5 +1,10 @@
 import { loadEnv } from '@/lib/env';
 
+// Next.js 类型将 process.env.NODE_ENV 声明为只读；测试需覆盖它，显式收敛为可变索引签名
+const setNodeEnv = (value: string) => {
+  (process.env as Record<string, string | undefined>).NODE_ENV = value;
+};
+
 // Mock console.error
 jest.spyOn(console, 'error').mockImplementation();
 jest.spyOn(console, 'log').mockImplementation();
@@ -24,8 +29,10 @@ describe('Environment Variable Validation', () => {
 
   describe('loadEnv', () => {
     it('should return default values in test environment', () => {
-      // Set NODE_ENV to test
-      process.env.NODE_ENV = 'test';
+      // 实现为严格模式：必填项（JWT_SECRET/REFRESH_TOKEN_SECRET）无默认回退，测试需显式提供
+      setNodeEnv('test');
+      process.env.JWT_SECRET = 'test-jwt-secret-123456789012345678901234567890';
+      process.env.REFRESH_TOKEN_SECRET = 'test-refresh-token-secret-123456789012345678901234567890';
 
       // Call loadEnv
       const env = loadEnv();
@@ -41,7 +48,7 @@ describe('Environment Variable Validation', () => {
 
     it('should validate and return environment variables in production', () => {
       // Set NODE_ENV to production
-      process.env.NODE_ENV = 'production';
+      setNodeEnv('production');
 
       // Set required environment variables
       process.env.DB_MASTER_HOST = 'db.example.com';
@@ -64,7 +71,7 @@ describe('Environment Variable Validation', () => {
 
     it('should exit process with invalid JWT_SECRET in production', () => {
       // Set NODE_ENV to production
-      process.env.NODE_ENV = 'production';
+      setNodeEnv('production');
 
       // Set required environment variables but with invalid JWT_SECRET
       process.env.DB_MASTER_HOST = 'db.example.com';
@@ -83,7 +90,7 @@ describe('Environment Variable Validation', () => {
 
     it('should exit process with missing required variables in production', () => {
       // Set NODE_ENV to production
-      process.env.NODE_ENV = 'production';
+      setNodeEnv('production');
 
       // Don't set any environment variables
 
@@ -94,7 +101,7 @@ describe('Environment Variable Validation', () => {
 
     it('should use defaults for optional variables', () => {
       // Set NODE_ENV to production
-      process.env.NODE_ENV = 'production';
+      setNodeEnv('production');
 
       // Set required environment variables
       process.env.DB_MASTER_HOST = 'db.example.com';
@@ -118,7 +125,7 @@ describe('Environment Variable Validation', () => {
 
     it('should use provided values for optional variables', () => {
       // Set NODE_ENV to production
-      process.env.NODE_ENV = 'production';
+      setNodeEnv('production');
 
       // Set required environment variables
       process.env.DB_MASTER_HOST = 'db.example.com';
