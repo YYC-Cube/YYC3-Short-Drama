@@ -11,8 +11,9 @@ const config = {
   transform: {
     '^.+\\.(t|j)sx?$': ['babel-jest', { configFile: require.resolve('./babel.jest.config.cjs') }],
   },
-  // 2026-10-05 整改（P0-4）：collectCoverageFrom 从不存在的 src/** 改为真实源码目录；
-  // 移除从未生效的 80% 阈值——先以"测试全部通过"为硬门禁，测出真实覆盖率基线后再设阈值
+  // 2026-10-05 整改（P0-4）：collectCoverageFrom 从不存在的 src/** 改为真实源码目录
+  // 2026-10-05 P1：真实覆盖率基线已测量（global 12.29% / lib 38.38% lines），
+  // 按棘轮原则设为"略低于当前值"——防止覆盖回退，新增代码稀释阈值属预期（补测或显式上调）
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',
     'components/**/*.{js,jsx,ts,tsx}',
@@ -22,6 +23,21 @@ const config = {
     'services/**/*.{js,jsx,ts,tsx}',
     'utils/**/*.{js,jsx,ts,tsx}',
   ],
+  coverageThreshold: {
+    global: {
+      statements: 12,
+      branches: 11,
+      functions: 8,
+      lines: 12,
+    },
+    // lib/ 是有测试覆盖的核心层（db/jwt/models），单独设更高棘轮
+    './lib/**/*.{ts,tsx}': {
+      statements: 35,
+      branches: 30,
+      functions: 29,
+      lines: 36,
+    },
+  },
 };
 
 module.exports = config;
