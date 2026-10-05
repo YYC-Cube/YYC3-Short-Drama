@@ -24,13 +24,14 @@ const config = {
     'utils/**/*.{js,jsx,ts,tsx}',
   ],
   coverageThreshold: {
+    // 2026-10-05 实测基线: statements 11.47 / branches 12.5 / functions 8.2 / lines 12.29
+    // 阈值取略低于基线防回退（棘轮）。
     // 注意：coverageThreshold 的 glob 键是"逐文件"比较语义（而非目录汇总），
-    // lib/ 内存在无测试文件（fonts/email/sms 等），故只设 global 汇总棘轮；
-    // lib 层细化门禁待其无测试文件补测后再评估。
+    // lib/ 内存在无测试文件，故只设 global 汇总棘轮；细化门禁待补测后评估。
     global: {
-      statements: 12,
-      branches: 11,
-      functions: 8,
+      statements: 11,
+      branches: 12,
+      functions: 7,
       lines: 12,
     },
   },

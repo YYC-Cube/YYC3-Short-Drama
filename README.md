@@ -464,7 +464,7 @@ export const revalidate = 3600 // 1小时重新验证
 ### 测试框架
 
 - **单元测试**：Jest 30 + React Testing Library（`pnpm test`）
-- **覆盖率棘轮门禁**（CI 硬门禁，`pnpm test:coverage`）：2026-10-05 实测基线 global **12.29% lines** / lib 层 **38.38% lines**，阈值设为略低于基线防回退（global 12/11/8/12，lib 35/30/29/36）——历史文档中的"80% 门禁"从未生效，已由真实基线取代
+- **覆盖率棘轮门禁**（CI 硬门禁，`pnpm test:coverage`）：2026-10-05 实测基线 global **11.47% stmts / 12.29% lines**（lib 层 38% lines 为有测试子集），阈值设为略低于基线防回退（11/12/7/12）——历史文档中的"80% 门禁"从未生效，已由真实基线取代
 - **构建冒烟**：`node scripts/smoke-build.mjs out`（路由/泄漏/体积≤25MB/静态纯度四项校验，已入 CI）
 
 ### 运行测试
