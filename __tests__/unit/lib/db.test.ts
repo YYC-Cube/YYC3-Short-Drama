@@ -1,4 +1,4 @@
-import pool from '@/lib/db';
+import { getPool } from '@/lib/db';
 
 // Mock mysql2
 jest.mock('mysql2/promise', () => {
@@ -20,8 +20,9 @@ jest.mock('mysql2/promise', () => {
 });
 
 describe('Database Connection', () => {
-  describe('pool', () => {
+  describe('pool (lazy)', () => {
     it('should return a database pool instance', () => {
+      const pool = getPool();
       expect(pool).toBeDefined();
       expect(typeof pool.getConnection).toBe('function');
       expect(typeof pool.query).toBe('function');

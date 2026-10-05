@@ -13,7 +13,8 @@
 # API routes (excluded for static export)
 # Phase 1: Deploy as pure static site on GitHub Pages
 # API routes require server-side runtime, incompatible with output: 'export'
-# To restore APIs: Remove this line and switch to dynamic deployment (Vercel/Railway)
+# 🚫 安全警告: 历史中的 API 代码含已知后门，严禁从 git 历史原样恢复
+# 恢复全栈模式必须基于干净重写，详见 docs/security/2026-10-05-历史后门处置与密钥轮换决策.md
 
 # production
 /build
@@ -26,6 +27,7 @@ yarn-error.log*
 
 # env files
 .env*
+!/.env.example
 
 # vercel
 .vercel

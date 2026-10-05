@@ -1,6 +1,13 @@
 import { createUser } from "@/lib/models/user.model"
 import { query } from "@/lib/db"
 
+// 生产环境护栏：本脚本会创建"已知密码"的测试账号（含管理员），
+// 若曾在真实数据库执行过，请按 docs/security/ 决策文档清理相关账号
+if (process.env.NODE_ENV === "production" && process.argv[2] !== "--force") {
+  console.error("🚫 拒绝执行：生产环境禁止填充测试用户（确需时显式追加 --force，并在事后清理账号）")
+  process.exit(1)
+}
+
 async function seedTestUsers() {
   console.log("🌱 开始创建测试用户...")
 

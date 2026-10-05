@@ -12,12 +12,22 @@
 
 import mysql from "mysql2/promise";
 
+// 安全整改（2026-10-05）：移除默认凭据回退，凭据仅来自环境变量，缺失时快速失败
+// 详见 docs/security/2026-10-05-历史后门处置与密钥轮换决策.md
+const dbUser = process.env.DB_MASTER_USER
+const dbPass = process.env.DB_MASTER_PASS
+if (!dbUser || !dbPass) {
+  throw new Error(
+    "数据库凭据未配置：请在 .env.local 中设置 DB_MASTER_USER 与 DB_MASTER_PASS（模板见 .env.example）。出于安全考虑，本模块不再提供默认账号密码回退。",
+  )
+}
+
 // 创建数据库连接池
 const pool = mysql.createPool({
   host: process.env.DB_MASTER_HOST || "localhost",
   port: Number.parseInt(process.env.DB_MASTER_PORT || "3306"),
-  user: process.env.DB_MASTER_USER || "yyc3_dj",
-  password: process.env.DB_MASTER_PASS || "yyc3_dj",
+  user: dbUser,
+  password: dbPass,
   database: process.env.DB_MASTER_NAME || "yyc3_my",
   charset: process.env.DB_MASTER_CHARSET || "utf8mb4",
   waitForConnections: true,
@@ -100,6 +110,11 @@ export async function testConnection(): Promise<boolean> {
 export async function closePool(): Promise<void> {
   await pool.end()
   clearCache()
+}
+
+// 池访问器（供测试/脚本显式获取，不改变默认导出行为）
+export function getPool(): mysql.Pool {
+  return pool
 }
 
 export default pool

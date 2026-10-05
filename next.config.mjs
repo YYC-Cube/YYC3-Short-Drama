@@ -10,10 +10,11 @@
  * - 原因: 静态导出不支持服务端API (需要Node.js运行时)
  * - 影响: 登录、AI生成、支付等功能在静态版本中不可用
  *
- * 📋 如需恢复完整功能:
- * 1. 移除 output: 'export' 配置
- * 2. 从 .gitignore 中删除 /app/api/
- * 3. 改用 Vercel/Railway 等支持 Node.js 的平台部署
+ * 🚫 安全警告（2026-10-05）:
+ * - git 历史中的 app/api 代码包含已知管理员后门与弱密钥默认值，
+ *   严禁从 git 历史中原样恢复 /app/api/！
+ * - 处置决策与安全说明见: docs/security/2026-10-05-历史后门处置与密钥轮换决策.md
+ * - 如需恢复全栈模式: 必须基于干净重写的 API 路由 + 强制环境变量校验
  */
 
 /** @type {import('next').NextConfig} */
