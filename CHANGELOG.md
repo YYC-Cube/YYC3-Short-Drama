@@ -13,6 +13,14 @@
 
 以《首次技术调研报告》为输入的系统性质量与安全整改（P0 全清 + P1/P2 主体落地）。
 
+### Security (release hardening)
+
+- **生产依赖漏洞清零**：`pnpm audit --prod` 18 → 0
+  - next 16.3.3→16.3.6（修复 next/og ImageResponse RCE，CRITICAL）
+  - nodemailer 9.0.6→10.0.14（修复 addressparser DoS ×2，HIGH；@types 同步 10.x）
+  - undici overrides 强制 ≥7.29.1（修复 DoS/TLS 校验绕过 ×2，HIGH；经 ai SDK 传递链）
+- CI 供应链加固：9 个 Actions 固定 commit SHA；工作流权限最小化
+
 ### Security
 
 - **历史后门处置**：永久禁止从 git 历史原样恢复 `/app/api/`；危险恢复指引替换为安全警告；决策记录与重评触发条件见 `docs/security/`
