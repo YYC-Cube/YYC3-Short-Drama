@@ -15,7 +15,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
 import { extname, join } from "node:path"
 
 const outDir = process.argv[2] || "out"
-const MAX_TOTAL_BYTES = 50 * 1024 * 1024 // 50MB；图片压缩落地后（P2）收紧到 25MB
+const MAX_TOTAL_BYTES = 25 * 1024 * 1024 // 25MB（2026-10-05 图片治理后由 50MB 收紧；孤儿清理+sharp 压缩使 out/ 约 15MB）
 
 const REQUIRED_ROUTES = [
   "/",
