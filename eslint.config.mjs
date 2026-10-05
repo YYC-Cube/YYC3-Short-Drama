@@ -14,7 +14,7 @@ const hooksArchRules = {
 
 const eslintConfig = [
   {
-    ignores: ['node_modules/**', '.next/**', 'out/**', 'disabled/**', 'scripts/**'],
+    ignores: ['node_modules/**', '.next/**', 'out/**', 'disabled/**', 'scripts/**', 'coverage/**'],
   },
   ...coreWebVitals,
   {
