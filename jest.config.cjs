@@ -24,18 +24,14 @@ const config = {
     'utils/**/*.{js,jsx,ts,tsx}',
   ],
   coverageThreshold: {
+    // 注意：coverageThreshold 的 glob 键是"逐文件"比较语义（而非目录汇总），
+    // lib/ 内存在无测试文件（fonts/email/sms 等），故只设 global 汇总棘轮；
+    // lib 层细化门禁待其无测试文件补测后再评估。
     global: {
       statements: 12,
       branches: 11,
       functions: 8,
       lines: 12,
-    },
-    // lib/ 是有测试覆盖的核心层（db/jwt/models），单独设更高棘轮
-    './lib/**/*.{ts,tsx}': {
-      statements: 35,
-      branches: 30,
-      functions: 29,
-      lines: 36,
     },
   },
 };
