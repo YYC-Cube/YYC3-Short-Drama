@@ -91,14 +91,21 @@ export function handleError(
 }
 
 /**
- * 将错误记录到服务器
+ * 将错误上报到监控服务（Sentry，若已通过 instrumentation-client 激活）。
+ * 未启用监控时静默完成（无网络请求、不加载 SDK chunk）。
  */
 async function logErrorToServer(errorDetails: ErrorDetails): Promise<void> {
-  // 在实际应用中，这将发送错误到服务器
-  // 这里我们只是模拟这个过程
-  return new Promise((resolve) => {
-    setTimeout(resolve, 100)
-  })
+  if (typeof window === "undefined" || !(window as typeof window & { __yyc3Telemetry?: boolean }).__yyc3Telemetry) {
+    return
+  }
+  try {
+    const Sentry = await import("@sentry/react")
+    const error = new Error(errorDetails.message)
+    error.stack = errorDetails.stack
+    Sentry.captureException(error, { extra: { type: errorDetails.type, context: errorDetails.context } })
+  } catch {
+    // 上报失败不影响主流程
+  }
 }
 
 /**
