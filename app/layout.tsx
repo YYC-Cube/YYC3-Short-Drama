@@ -1,4 +1,5 @@
 import { ThemeProvider } from "@/components/theme-provider"
+import ErrorBoundary from "@/components/shared/error-boundary"
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/contexts/auth-context"
 import type { Metadata, Viewport } from "next"
@@ -49,7 +50,8 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <AuthProvider>
-            {children}
+            {/* 全局错误边界：任何路由的渲染错误不再白屏（P1 整改接入） */}
+            <ErrorBoundary>{children}</ErrorBoundary>
             <Toaster />
           </AuthProvider>
         </ThemeProvider>

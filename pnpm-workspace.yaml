@@ -2,6 +2,12 @@
 packages:
   - "."
 
+# 供应链策略：关闭 minimumReleaseAge（默认拒绝发布不足 24h 的包版本）。
+# 理由：CI 固定使用 --frozen-lockfile，锁文件本身即版本审查边界；
+# 该策略会让"依赖整理当天发布的新版本"阻塞所有 CI（regenerate@1.5.0 事件，2026-10-05）。
+# 团队化后如需收紧，可移除此行并配合 PR 评审使用。
+minimumReleaseAge: 0
+
 allowBuilds:
   "@parcel/watcher": true
   esbuild: true

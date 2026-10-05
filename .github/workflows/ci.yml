@@ -190,6 +190,10 @@ jobs:
     needs: quality-check
     if: github.event_name == 'pull_request'
 
+    permissions:
+      contents: read
+      issues: write
+
     steps:
       - name: 📥 下载构建产物
         uses: actions/download-artifact@v4
@@ -199,6 +203,9 @@ jobs:
 
       - name: 💬 评论PR预览链接
         uses: actions/github-script@v7
+        # 评论属通知性质：仓库 Settings→Actions→Workflow permissions 为只读时 GITHUB_TOKEN 无法发评论，
+        # 失败不阻断门禁（Owner 将仓库设置改为 Read and write 后自动恢复）
+        continue-on-error: true
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
