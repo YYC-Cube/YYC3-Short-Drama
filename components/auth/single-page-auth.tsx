@@ -25,13 +25,7 @@ import {
   Crown,
   Star,
 } from "lucide-react"
-import {
-  sendVerificationCode,
-  loginUser,
-  registerUser,
-  type LoginRequest,
-  type RegisterRequest,
-} from "@/services/auth-service"
+import { sendVerificationCode } from "@/services/auth-service"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
@@ -131,7 +125,7 @@ export default function SinglePageAuth() {
 
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.2 })
-  const { login } = useAuth()
+  const { login, register } = useAuth()
   const { toast } = useToast()
   const router = useRouter()
 
@@ -226,41 +220,22 @@ export default function SinglePageAuth() {
     setIsLoading(true)
 
     try {
-      const loginRequest: LoginRequest = {
-        phoneNumber: loginForm.phoneNumber,
-        verificationCode: loginForm.verificationCode,
-        deviceInfo: {
-          userAgent: navigator.userAgent,
-          platform: navigator.platform,
-        },
-      }
+      // 单一调用链：context.login → auth-service（静态演示模式，数据仅存本机）
+      const response = await login(loginForm.phoneNumber, loginForm.verificationCode)
 
-      const response = await loginUser(loginRequest)
+      toast({
+        title: "登录成功！",
+        description: response.isLocalUser ? "欢迎洛阳本地用户，您将享受专属权益" : "欢迎使用言语平台",
+      })
 
-      if (response.success && response.user && response.token) {
-        // login 内部抛错表示失败；此处成功即写入上下文
-        await login(loginForm.phoneNumber, loginForm.verificationCode)
-
-        toast({
-          title: "登录成功！",
-          description: response.isLocalUser ? "欢迎洛阳本地用户，您将享受专属权益" : "欢迎使用言语平台",
-        })
-
-        setTimeout(() => {
-          router.push("/profile")
-        }, 1500)
-      } else {
-        toast({
-          title: "登录失败",
-          description: response.error || "请检查验证码是否正确",
-          variant: "destructive",
-        })
-      }
+      setTimeout(() => {
+        router.push("/profile")
+      }, 1500)
     } catch (error) {
       console.error("登录失败:", error)
       toast({
         title: "登录失败",
-        description: "请稍后重试",
+        description: error instanceof Error ? error.message : "请稍后重试",
         variant: "destructive",
       })
     } finally {
@@ -306,19 +281,11 @@ export default function SinglePageAuth() {
     setIsLoading(true)
 
     try {
-      const registerRequest: RegisterRequest = {
-        username: registerForm.username,
-        phoneNumber: registerForm.phoneNumber,
+      // 单一调用链：context.register → auth-service（静态演示模式，不创建真实账号）
+      const response = await register(registerForm.username, registerForm.phoneNumber, registerForm.verificationCode, {
         email: registerForm.email,
         password: registerForm.password,
-        verificationCode: registerForm.verificationCode,
-        deviceInfo: {
-          userAgent: navigator.userAgent,
-          platform: navigator.platform,
-        },
-      }
-
-      const response = await registerUser(registerRequest)
+      })
 
       if (response.success) {
         toast({
@@ -336,7 +303,7 @@ export default function SinglePageAuth() {
       } else {
         toast({
           title: "注册失败",
-          description: response.error || "注册过程中出现错误",
+          description: response.message || response.error || "注册过程中出现错误",
           variant: "destructive",
         })
       }
@@ -344,7 +311,7 @@ export default function SinglePageAuth() {
       console.error("注册失败:", error)
       toast({
         title: "注册失败",
-        description: "请稍后重试",
+        description: error instanceof Error ? error.message : "请稍后重试",
         variant: "destructive",
       })
     } finally {
@@ -751,6 +718,13 @@ export default function SinglePageAuth() {
                     </Button>
                   </TabsContent>
                 </Tabs>
+
+                {/* 演示模式说明（2026-10-05 整改：如实告知数据边界） */}
+                <div className="mt-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-center">
+                  <p className="text-xs text-amber-300/90">
+                    演示模式：当前为静态演示环境，账号与数据仅保存在本机浏览器，不会上传服务器
+                  </p>
+                </div>
 
                 {/* 底部提示 */}
                 <div className="mt-6 text-center">
