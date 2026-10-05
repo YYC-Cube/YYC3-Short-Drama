@@ -8,6 +8,11 @@ packages:
 # 团队化后如需收紧，可移除此行并配合 PR 评审使用。
 minimumReleaseAge: 0
 
+# 传递依赖安全覆盖：undici 经 ai SDK 链引入（全栈轨专用，静态站不运行），
+# 强制 ≥7.29.1 消除 DoS/TLS 校验两个 HIGH（GHSA 公告，2026-10-05 终审整改）
+overrides:
+  undici: ^7.29.1
+
 allowBuilds:
   "@parcel/watcher": true
   esbuild: true
